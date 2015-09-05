@@ -37,6 +37,11 @@ class MainViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - Action methods
+    @IBAction func toggleLeftMenu(sender: AnyObject) {
+        self.toggleLeftMenu()
+    }
+    
     // MARK: - Public api
     /*
     // Draw the three line nav icon
@@ -105,10 +110,10 @@ class MainViewController: UIViewController {
     
     
     /*
-    // Change the title of the header bar
+    // Change the title of the header bar after view appeared
         @titleContent: String
     */
-    func setTitle(titleContent: String?) {
+    func setHeaderTitle(titleContent: String?) {
         self.titleLabel.title = titleContent
     }
     
@@ -131,12 +136,6 @@ class MainViewController: UIViewController {
     */
     func toggleLeftMenu() {
         self.rootViewController?.toggleLeftMenu()
-    }
-    
-    
-    // MARK: - Action methods
-    @IBAction func toggleLeftMenu(sender: AnyObject) {
-        self.toggleLeftMenu()
     }
     
 }

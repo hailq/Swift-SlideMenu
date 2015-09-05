@@ -10,9 +10,10 @@ import UIKit
 
 class MenuSegue: UIStoryboardSegue {
     override func perform() {
-        let menuController: MenuTableViewController = self.sourceViewController as MenuTableViewController
-        let rootController: RootSideMenuViewController = menuController.parentViewController as RootSideMenuViewController
         
-        rootController.changeContentController(self.destinationViewController as UIViewController)
+        let menuController: MenuTableViewController = self.sourceViewController as! MenuTableViewController
+        let rootController: RootSideMenuViewController = menuController.parentViewController as! RootSideMenuViewController
+        
+        rootController.changeContentController(self.destinationViewController as! UIViewController)
     }
 }

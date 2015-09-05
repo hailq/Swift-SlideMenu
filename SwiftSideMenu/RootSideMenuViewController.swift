@@ -43,9 +43,9 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
         // Setup controller hierachy
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         
-        self.menuTableViewController = storyBoard.instantiateViewControllerWithIdentifier("SBMenuTableViewControlleIdentifier") as MenuTableViewController!
+        self.menuTableViewController = storyBoard.instantiateViewControllerWithIdentifier("SBMenuTableViewControlleIdentifier") as? MenuTableViewController
         
-        self.mainViewController = storyBoard.instantiateViewControllerWithIdentifier("SBMainViewControllerIdentifier") as MainViewController!
+        self.mainViewController = storyBoard.instantiateViewControllerWithIdentifier("SBMainViewControllerIdentifier") as! MainViewController!
 
         self._displayChildController(self.menuTableViewController!)    // Adding menu table as lowest layer
         self._displayChildController(self.mainViewController!)        // Adding main view as the upper layer
@@ -57,7 +57,7 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
 
 
         // Setup the first content controller
-        var firstContentController = storyBoard.instantiateViewControllerWithIdentifier("SBFirstContentIdentifier") as UIViewController
+        var firstContentController = storyBoard.instantiateViewControllerWithIdentifier("SBFirstContentIdentifier") as! UIViewController
         self.changeContentController(firstContentController)
         
     }
@@ -221,7 +221,7 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
         contentController.didMoveToParentViewController(mainViewController)
         
         // Change main view header title
-        mainViewController.setTitle(contentController.title)
+        mainViewController.setHeaderTitle(contentController.title)
 
     }
     

@@ -10,11 +10,16 @@ import UIKit
 
 class ContentViewController: UIViewController {
     
-    
     @IBOutlet weak var webView: UIWebView!
+    
+    var mainSideMenuController: MainViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if self.parentViewController != nil && self.parentViewController!.isKindOfClass(MainViewController) {
+            self.mainSideMenuController = self.parentViewController as? MainViewController
+        }
         
         // Set title
         self.title = "Google Web View"
