@@ -17,16 +17,16 @@ class ContentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if self.parentViewController != nil && self.parentViewController!.isKindOfClass(MainViewController) {
-            self.mainSideMenuController = self.parentViewController as? MainViewController
+        if self.parent != nil && self.parent!.isKind(of: MainViewController.self) {
+            self.mainSideMenuController = self.parent as? MainViewController
         }
         
         // Set title
         self.title = "Google Web View"
 
         // Do any additional setup after loading the view.
-        var url: NSURL = NSURL(string: "https://www.google.com.vn")!
-        var urlRequest: NSURLRequest = NSURLRequest(URL: url)
+        let url: URL = URL(string: "https://www.google.com.vn")!
+        let urlRequest: URLRequest = URLRequest(url: url)
         self.webView.loadRequest(urlRequest)
     }
 

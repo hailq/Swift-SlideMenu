@@ -25,7 +25,7 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
 
         // Setup root controller
-        self.rootViewController = self.parentViewController as? RootSideMenuViewController
+        self.rootViewController = self.parent as? RootSideMenuViewController
         
         // Setup image for nav icon
         self.navIcon.title = nil
@@ -38,7 +38,7 @@ class MainViewController: UIViewController {
     }
     
     // MARK: - Action methods
-    @IBAction func toggleLeftMenu(sender: AnyObject) {
+    @IBAction func toggleLeftMenu(_ sender: AnyObject) {
         self.toggleLeftMenu()
     }
     
@@ -68,21 +68,21 @@ class MainViewController: UIViewController {
         // Draw the image
         let lineWidth: CGFloat = 2.0
 
-        CGContextSetLineWidth(context, lineWidth)
-        CGContextSetStrokeColorWithColor(context, UIColor(red: 0.0, green: 122.0/255.0, blue: 1.0, alpha: 1.0).CGColor)
+        context?.setLineWidth(lineWidth)
+        context?.setStrokeColor(UIColor(red: 0.0, green: 122.0/255.0, blue: 1.0, alpha: 1.0).cgColor)
         
-        CGContextMoveToPoint(context, 0.0, lineWidth/2)
-        CGContextAddLineToPoint(context, frameWidth, lineWidth/2)
+        context?.move(to: CGPoint(x: 0.0, y: lineWidth/2))
+        context?.addLine(to: CGPoint(x: frameWidth, y: lineWidth/2))
         
-        CGContextMoveToPoint(context, 0.0, frameHeight/2)
-        CGContextAddLineToPoint(context, frameWidth, frameHeight/2)
+        context?.move(to: CGPoint(x: 0.0, y: frameHeight/2))
+        context?.addLine(to: CGPoint(x: frameWidth, y: frameHeight/2))
         
-        CGContextMoveToPoint(context, 0.0, frameHeight - lineWidth / 2)
-        CGContextAddLineToPoint(context, frameWidth, frameHeight - lineWidth / 2)
+        context?.move(to: CGPoint(x: 0.0, y: frameHeight - lineWidth / 2))
+        context?.addLine(to: CGPoint(x: frameWidth, y: frameHeight - lineWidth / 2))
         
-        CGContextStrokePath(context)
+        context?.strokePath()
         
-        var image = UIGraphicsGetImageFromCurrentImageContext() // Return UIImage
+        let image = UIGraphicsGetImageFromCurrentImageContext() // Return UIImage
         UIGraphicsEndImageContext()
         
         return image
@@ -96,13 +96,13 @@ class MainViewController: UIViewController {
         // true: show the bar
         // false: hide the bar
     */
-    func showHeader(isShow: Bool) {
+    func showHeader(_ isShow: Bool) {
         if (isShow == false && self.headerBar != nil) {
             self.headerBar.removeFromSuperview()
             
             // Resetup content frame
-            var frame = self.contentView.frame
-            var newFrame = CGRect(x: 0.0, y: 0.0, width: frame.width, height: frame.height)
+            let frame = self.contentView.frame
+            let newFrame = CGRect(x: 0.0, y: 0.0, width: frame.width, height: frame.height)
             
             self.contentView.frame = newFrame
         }
@@ -113,7 +113,7 @@ class MainViewController: UIViewController {
     // Change the title of the header bar after view appeared
         @titleContent: String
     */
-    func setHeaderTitle(titleContent: String?) {
+    func setHeaderTitle(_ titleContent: String?) {
         self.titleLabel.title = titleContent
     }
     

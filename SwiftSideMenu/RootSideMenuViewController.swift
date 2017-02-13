@@ -11,12 +11,12 @@ import UIKit
 class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate {
 
     // Constant for configuration
-    private let kAnimateMenuDuration = 0.2
-    private let kAlphaMask: CGFloat = 0.5
-    private let kStausBarHeight: CGFloat = 20.0
-    private let kTouchNavArea: CGFloat = 50.0
-    private var kTouchNavThreshold: CGFloat = 0.0   // Define it corresponding to the root view
-    private var kNavMenuSpace: CGFloat = 0.0     // Define it corresponding to the root view
+    fileprivate let kAnimateMenuDuration = 0.2
+    fileprivate let kAlphaMask: CGFloat = 0.5
+    fileprivate let kStausBarHeight: CGFloat = 20.0
+    fileprivate let kTouchNavArea: CGFloat = 50.0
+    fileprivate var kTouchNavThreshold: CGFloat = 0.0   // Define it corresponding to the root view
+    fileprivate var kNavMenuSpace: CGFloat = 0.0     // Define it corresponding to the root view
     
     var menuTableViewController: MenuTableViewController?
     var mainViewController: MainViewController?
@@ -30,7 +30,7 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
         // Do any additional setup after loading the view.
         
         // Setup constant value for naving side menu
-        let viewSize = UIScreen.mainScreen().applicationFrame.size
+        let viewSize = UIScreen.main.applicationFrame.size
         self.kNavMenuSpace = viewSize.width / 4 * 3
         self.kTouchNavThreshold = self.kNavMenuSpace / 2
         
@@ -38,31 +38,31 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
         let maskFrame: CGRect = CGRect(x: 0, y: 0, width: viewSize.width, height: viewSize.height)
         self.maskOpaqueView = UIView(frame: maskFrame)
         self.maskOpaqueView?.backgroundColor = UIColor(white: 0.0, alpha: kAlphaMask)
-        self.maskOpaqueView?.userInteractionEnabled = false
+        self.maskOpaqueView?.isUserInteractionEnabled = false
         
         // Setup controller hierachy
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         
-        self.menuTableViewController = storyBoard.instantiateViewControllerWithIdentifier("SBMenuTableViewControlleIdentifier") as? MenuTableViewController
+        self.menuTableViewController = storyBoard.instantiateViewController(withIdentifier: "SBMenuTableViewControlleIdentifier") as? MenuTableViewController
         
-        self.mainViewController = storyBoard.instantiateViewControllerWithIdentifier("SBMainViewControllerIdentifier") as! MainViewController!
+        self.mainViewController = storyBoard.instantiateViewController(withIdentifier: "SBMainViewControllerIdentifier") as? MainViewController
 
         self._displayChildController(self.menuTableViewController!)    // Adding menu table as lowest layer
         self._displayChildController(self.mainViewController!)        // Adding main view as the upper layer
 
         // Setup gesture recognizer for showing side menu
-        var panMenuGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: "handleLeftPanMenuGesture:")
+        let panMenuGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(RootSideMenuViewController.handleLeftPanMenuGesture(_:)))
         panMenuGesture.delegate = self
         self.mainViewController?.view.addGestureRecognizer(panMenuGesture)
 
 
         // Setup the first content controller
-        var firstContentController = storyBoard.instantiateViewControllerWithIdentifier("SBFirstContentIdentifier") as! UIViewController
+        let firstContentController = storyBoard.instantiateViewController(withIdentifier: "SBFirstContentIdentifier") 
         self.changeContentController(firstContentController)
         
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
     }
@@ -72,44 +72,43 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
         // Dispose of any resources that can be recreated.
     }
     
-    private func _displayChildController(child: UIViewController) {
+    fileprivate func _displayChildController(_ child: UIViewController) {
         self.addChildViewController(child)
         
         // Setup new frame with space for status bar
-        var statusBar = (UIApplication.sharedApplication().statusBarHidden) ? 0.0 : kStausBarHeight
+        let statusBar = (UIApplication.shared.isStatusBarHidden) ? 0.0 : kStausBarHeight
         
-        var size = self.view.frame.size
-        var childFrame = CGRect(x: 0.0, y: statusBar, width: size.width, height: size.height)
+        let size = self.view.frame.size
+        let childFrame = CGRect(x: 0.0, y: statusBar, width: size.width, height: size.height)
         child.view.frame = childFrame
         
         self.view.addSubview(child.view)
-        child.didMoveToParentViewController(self)
+        child.didMove(toParentViewController: self)
     }
     
     // MARK: - Controll side menu display actions
-    func handleLeftPanMenuGesture(recoginzer: UIPanGestureRecognizer) {
+    func handleLeftPanMenuGesture(_ recoginzer: UIPanGestureRecognizer) {
         
-        var mainView = self.mainViewController!.view
-        var menuView = self.menuTableViewController!.view
+        let mainView = self.mainViewController!.view
 
         // Get starting point
-        if recoginzer.state == UIGestureRecognizerState.Began {
-            self.startPoint = recoginzer.locationInView(mainView)
+        if recoginzer.state == UIGestureRecognizerState.began {
+            self.startPoint = recoginzer.location(in: mainView)
             
             // Display an opaque mask to cover main view
             if (self.maskOpaqueView != nil) {
-                mainView.addSubview(self.maskOpaqueView!)
+                mainView?.addSubview(self.maskOpaqueView!)
             }
         }
 
-        let currentPoint = recoginzer.locationInView(mainView)
+        let currentPoint = recoginzer.location(in: mainView)
         
-        let oldFrame = mainView.frame
+        let oldFrame = mainView?.frame
         let xDev = currentPoint.x - self.startPoint.x
-        let newX = ((oldFrame.origin.x + xDev) > 0) ? (oldFrame.origin.x + xDev) : 0    // Do not allow the view reach beyond the left edge
-        let newFrame = CGRect(x: newX, y: oldFrame.origin.y, width: oldFrame.size.width, height: oldFrame.size.height)
+        let newX = (((oldFrame?.origin.x)! + xDev) > 0) ? ((oldFrame?.origin.x)! + xDev) : 0    // Do not allow the view reach beyond the left edge
+        let newFrame = CGRect(x: newX, y: (oldFrame?.origin.y)!, width: (oldFrame?.size.width)!, height: (oldFrame?.size.height)!)
         
-        mainView.frame = newFrame
+        mainView?.frame = newFrame
         
         // Setting opaque layer alpha while moving the menu view
         self.maskOpaqueView?.alpha = (newX / self.kNavMenuSpace) * kAlphaMask
@@ -117,8 +116,8 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
         
         // Determine to open or close menu in the end state
         // by the threshold location
-        if recoginzer.state == UIGestureRecognizerState.Cancelled || recoginzer.state == UIGestureRecognizerState.Ended {
-            var endPoint = self.mainViewController!.view.frame.origin
+        if recoginzer.state == UIGestureRecognizerState.cancelled || recoginzer.state == UIGestureRecognizerState.ended {
+            let endPoint = self.mainViewController!.view.frame.origin
             if (endPoint.x >= self.kTouchNavThreshold) {
                 
                 // Open the menu
@@ -134,23 +133,22 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
     
     func openLeftMenu() {
         
-        var mainView = self.mainViewController!.view
-        var menuView = self.menuTableViewController!.view
+        let mainView = self.mainViewController!.view
         
         // Animate opening menu
-        UIView.animateWithDuration(kAnimateMenuDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseIn, animations: { () -> Void in
+        UIView.animate(withDuration: kAnimateMenuDuration, delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: { () -> Void in
 
-            var oldFrame = mainView.frame
+            let oldFrame = mainView?.frame
             
-            var newFrame = CGRect(x: self.kNavMenuSpace, y: oldFrame.origin.y, width: oldFrame.size.width, height: oldFrame.size.height)
+            let newFrame = CGRect(x: self.kNavMenuSpace, y: (oldFrame?.origin.y)!, width: (oldFrame?.size.width)!, height: (oldFrame?.size.height)!)
             
             // Apply new frame on main view to show menu view
-            mainView.frame = newFrame;
+            mainView?.frame = newFrame;
             
             // Display an opaque mask to cover main view
             if (self.maskOpaqueView != nil) {
                 self.maskOpaqueView!.alpha = self.kAlphaMask
-                mainView.addSubview(self.maskOpaqueView!)
+                mainView?.addSubview(self.maskOpaqueView!)
             }
             
         }) { (Bool) -> Void in
@@ -161,17 +159,16 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
     
     func closeLeftMenu() {
         
-        var mainView = self.mainViewController!.view
-        var menuView = self.menuTableViewController!.view
+        let mainView = self.mainViewController!.view
         
         // Animate close menu
-        UIView.animateWithDuration(kAnimateMenuDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+        UIView.animate(withDuration: kAnimateMenuDuration, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: { () -> Void in
             
-            var oldFrame = mainView.frame
-            var newFrame = CGRect(x: 0.0, y: oldFrame.origin.y, width: oldFrame.size.width, height: oldFrame.size.height)
+            let oldFrame = mainView?.frame
+            let newFrame = CGRect(x: 0.0, y: (oldFrame?.origin.y)!, width: (oldFrame?.size.width)!, height: (oldFrame?.size.height)!)
             
             // Apply new frame on main view to show menu view
-            mainView.frame = newFrame;
+            mainView?.frame = newFrame;
             
             // Hide the opaque mask on main view
             if (self.maskOpaqueView != nil) {
@@ -194,19 +191,19 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
     }
     
     // MARK: - Content action methods
-    func changeContentController(contentController: UIViewController) {
+    func changeContentController(_ contentController: UIViewController) {
         
         // Close side bar
         if self.isLeftMenuShown {
             self.closeLeftMenu()
         }
         
-        var mainViewController = self.mainViewController!
+        let mainViewController = self.mainViewController!
         var currentContentController = mainViewController.currentContentController
         
         // Remove current view controller
         if (currentContentController != nil) {
-            currentContentController!.willMoveToParentViewController(nil)
+            currentContentController!.willMove(toParentViewController: nil)
             currentContentController!.view.removeFromSuperview()
             currentContentController!.removeFromParentViewController()
             currentContentController = nil
@@ -218,7 +215,7 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
         mainViewController.addChildViewController(contentController)
         contentController.view.frame = mainViewController.contentView.frame
         mainViewController.view.addSubview(contentController.view)
-        contentController.didMoveToParentViewController(mainViewController)
+        contentController.didMove(toParentViewController: mainViewController)
         
         // Change main view header title
         mainViewController.setHeaderTitle(contentController.title)
@@ -226,12 +223,12 @@ class RootSideMenuViewController: UIViewController, UIGestureRecognizerDelegate 
     }
     
     // MARK:- Implement the UIGestureDelegate methods
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         
         // Disable if touch is out side of main current content view
         // or out of defined nav area
         let contentView = self.mainViewController?.currentContentController?.view
-        let xLocation = touch.locationInView(contentView).x
+        let xLocation = touch.location(in: contentView).x
         
         if (contentView == nil
             || touch.view != contentView
